@@ -1,38 +1,60 @@
 import pygame
+import random
 
 class Snake():
 
-    def __init__(self, pos = (0,0)):
+    def __init__(self, pos = (0,0), length = 3):
         size = 20
         pos = pos
+        length = length
         color = 'Green'
+
+    def update_snake():
+        # Would update snake on surface
+        print()
 
 class SnakeTrail():
     print()
 
-def movement(snake_pos, pixel_size, up, right, down, left):
+def movement(snake_pos, pixel_size, direction):
     # Updates Position of snake
-    if up:
+    #TODO: disable opposite turns; EX going forward then suddenly back
+    #if first_init:
+
+    # UP
+    if direction == 0:
         snake_pos[1] -= pixel_size
         print(snake_pos[1])
-
-    if right:
-        snake_pos[0] += pixel_size
-        print(snake_pos[0])
-
-    if down:
+        can_down = False
+        can_left, can_right = True, True
+        
+    # DOWN
+    if direction == 1:
         snake_pos[1] += pixel_size
         print(snake_pos[1])
+        can_up = False
+        can_right, can_left = True, True
 
-    if left:
+    # LEFT
+    if direction == 2:
         snake_pos[0] -= pixel_size
         print(snake_pos[0])
+        can_right = False
+        can_up, can_down = True, True
+
+    # RIGHT
+    if direction == 3:
+        snake_pos[0] += pixel_size
+        print(snake_pos[0])
+        can_left = False
+        can_up, can_down = True, True
 
     return snake_pos
 
 def main():
     pygame.init()
     pygame.display.set_caption("Snake")
+    clock = pygame.time.Clock()
 
     resolution = (800, 800)
 
@@ -47,18 +69,16 @@ def main():
     running = True
     
     # Player movement direction
-    up = False
-    right = False
-    down = False
-    left = False
+    direction = None
 
     while running:
 
         screen.fill('Black')
         pygame.draw.rect(screen, s_color, (snake_pos[0], snake_pos[1], pixel_size, pixel_size))
         pygame.display.flip()
+        dt = clock.tick(12)
 
-        snake_pos = movement(snake_pos, pixel_size, up, right, down, left)
+        snake_pos = movement(snake_pos, pixel_size, direction)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -66,28 +86,24 @@ def main():
 
 
             if event.type == pygame.KEYDOWN:
-                #TODO: fix diagonal movement via multiple inputs
-                #      Move to its own function
+                #TODO: Move to its own function
                 key = pygame.key.get_pressed()
                 
                 # Up
                 if key[pygame.K_w]:
-                    up, right, down, left = True, False, False, False
+                    direction = 0
                 
                 # Down
                 if key[pygame.K_s]:
-                    up, right, down, left = False, False, True, False
-                   # snake_pos = movement(snake_pos, pixel_size, up, right, down, left)
+                    direction = 1
 
                 # Left
                 if key[pygame.K_a]:
-                    up, right, down, left = False, False, False, True
-                   # snake_pos = movement(snake_pos, pixel_size, up, right, down, left)
+                    direction = 2
 
                 # Right
                 if key[pygame.K_d]:
-                    up, right, down, left = False, True, False, False
-                   # snake_pos = movement(snake_pos, pixel_size, up, right, down, left)
+                    direction = 3
 
         
 
