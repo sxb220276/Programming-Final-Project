@@ -44,6 +44,8 @@ def movement(snake_pos, pixel_size, direction):
     return snake_pos
 
 def create_Fruit(screen, resolution):
+    #works, just gets removed by screen.fill
+    #TODO: need to make a fruit class :/
     location = []
     location = 20 * (random.randrange(0, resolution[0] // 20)), 20 * (random.randrange(1, resolution[1] // 20))
     print(location)
@@ -72,7 +74,7 @@ def main():
 
     while running:
 
-       # screen.fill('Black')
+        screen.fill('Black')
         pygame.draw.rect(screen, s_color, (snake_pos[0], snake_pos[1], pixel_size, pixel_size))
         pygame.display.flip()
         dt = clock.tick(12)
