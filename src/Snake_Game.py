@@ -4,10 +4,10 @@ import random
 class Snake():
 
     def __init__(self, pos = (0,0), length = 3):
-        size = 20
-        pos = pos
-        length = length
-        color = 'Green'
+        self.size = 20
+        self.pos = pos
+        self.length = length
+        self.color = 'Green'
 
     def update_snake():
         # Would update snake on surface
@@ -25,31 +25,30 @@ def movement(snake_pos, pixel_size, direction):
     if direction == 0:
         snake_pos[1] -= pixel_size
         print(snake_pos[1])
-        can_down = False
-        can_left, can_right = True, True
-        
+
     # DOWN
     if direction == 1:
         snake_pos[1] += pixel_size
         print(snake_pos[1])
-        can_up = False
-        can_right, can_left = True, True
 
     # LEFT
     if direction == 2:
         snake_pos[0] -= pixel_size
         print(snake_pos[0])
-        can_right = False
-        can_up, can_down = True, True
 
     # RIGHT
     if direction == 3:
         snake_pos[0] += pixel_size
         print(snake_pos[0])
-        can_left = False
-        can_up, can_down = True, True
 
     return snake_pos
+
+def create_Fruit(screen, resolution):
+    location = []
+    location = 20 * (random.randrange(0, resolution[0] // 20)), 20 * (random.randrange(1, resolution[1] // 20))
+    print(location)
+    pygame.draw.rect(screen, 'Red', (location[0], location[1], 20, 20))
+    
 
 def main():
     pygame.init()
@@ -73,12 +72,14 @@ def main():
 
     while running:
 
-        screen.fill('Black')
+       # screen.fill('Black')
         pygame.draw.rect(screen, s_color, (snake_pos[0], snake_pos[1], pixel_size, pixel_size))
         pygame.display.flip()
         dt = clock.tick(12)
 
         snake_pos = movement(snake_pos, pixel_size, direction)
+
+        create_Fruit(screen, resolution)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,19 +91,19 @@ def main():
                 key = pygame.key.get_pressed()
                 
                 # Up
-                if key[pygame.K_w]:
+                if key[pygame.K_w] and direction != 1:
                     direction = 0
                 
                 # Down
-                if key[pygame.K_s]:
+                if key[pygame.K_s] and direction != 0:
                     direction = 1
 
                 # Left
-                if key[pygame.K_a]:
+                if key[pygame.K_a] and direction != 3:
                     direction = 2
 
                 # Right
-                if key[pygame.K_d]:
+                if key[pygame.K_d] and direction != 2:
                     direction = 3
 
         
