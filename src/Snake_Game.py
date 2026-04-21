@@ -1,54 +1,70 @@
 import pygame
 import random
 
-class Snake():
+class SnakeBit():
 
-    def __init__(self, pos = (0,0), length = 3):
+    def __init__(self, pos, screen):
         self.size = 20
         self.pos = pos
-        self.length = length
         self.color = 'Green'
+        self.screen = screen
 
-    def update_snake():
+    def draw_snake(self):
         # Would update snake on surface
-        print()
+        pygame.draw.rect(self.screen, self.color, (self.pos[0], self.pos[1], self.size, self.size))
+        print(self.pos)
 
 class SnakeTrail():
-    print()
+    #TODO: Create function that updates all bits within snake_body list
+    
+    def __init__(self, pos, screen, length):
+        self.pos = pos
+        self.screen = screen
+        self.length = length
+        self.snake_body = []
+
+    #creates individual parts of snakes and stores to back of list
+    #TODO: add loop to create all needed parts
+    #      Need to make a function that adds a bit on scoring fruit
+
+    def create_bits(self):
+        bit = SnakeBit(self.pos, self.screen)
+        self.snake_body.insert(-1, bit)
+    
+    # draws bits inside of list
+    def draw_bits(self):
+        for idx in self.snake_body:
+            idx.draw_snake()
 
 def movement(snake_pos, pixel_size, direction):
     # Updates Position of snake
-    #TODO: disable opposite turns; EX going forward then suddenly back
-    #if first_init:
 
     # UP
     if direction == 0:
         snake_pos[1] -= pixel_size
-        print(snake_pos[1])
+        #print(snake_pos[1])
 
     # DOWN
     if direction == 1:
         snake_pos[1] += pixel_size
-        print(snake_pos[1])
+        #print(snake_pos[1])
 
     # LEFT
     if direction == 2:
         snake_pos[0] -= pixel_size
-        print(snake_pos[0])
+        #print(snake_pos[0])
 
     # RIGHT
     if direction == 3:
         snake_pos[0] += pixel_size
-        print(snake_pos[0])
-
-    return snake_pos
+        #print(snake_pos[0])
 
 def create_Fruit(screen, resolution):
     #works, just gets removed by screen.fill
     #TODO: need to make a fruit class :/
     location = []
     location = 20 * (random.randrange(0, resolution[0] // 20)), 20 * (random.randrange(1, resolution[1] // 20))
-    print(location)
+    #print(location)
     pygame.draw.rect(screen, 'Red', (location[0], location[1], 20, 20))
     
 
@@ -63,9 +79,11 @@ def main():
     
     pixel_size = 20
     snake_pos = [resolution[0]//2,resolution[1]//2]
-    s_color = 'Green'
+    snake = SnakeTrail(snake_pos, screen, 4)
+    #all bits are created by Snake_Trail calling Snake bit from inside class functions
+    snake.create_bits()
+    
 
-    snake = snake_pos
 
     running = True
     
@@ -75,11 +93,11 @@ def main():
     while running:
 
         screen.fill('Black')
-        pygame.draw.rect(screen, s_color, (snake_pos[0], snake_pos[1], pixel_size, pixel_size))
+        snake.draw_bits()
         pygame.display.flip()
         dt = clock.tick(12)
 
-        snake_pos = movement(snake_pos, pixel_size, direction)
+        movement(snake_pos, pixel_size, direction)
 
         create_Fruit(screen, resolution)
 
@@ -107,11 +125,6 @@ def main():
                 # Right
                 if key[pygame.K_d] and direction != 2:
                     direction = 3
-
-        
-
-
-        
     
     pygame.quit
 
