@@ -101,6 +101,12 @@ class Fruit():
     def _draw_fruit(self):
         pygame.draw.rect(self.screen, 'Red', (self.pos[0], self.pos[1], self.size, self.size))
 
+    def _draw_score(self, screen):
+        font = pygame.font.SysFont("Arial", 20)
+        img = font.render(f"Score: {self.score}", False, 'White')
+
+        screen.blit(img, (5,0))
+
     def new_fruit(self):
         self.score += 1
         self.pos = [20 * (random.randrange(0, self.resolution[0] // 20)), 20 * (random.randrange(0, self.resolution[1] // 20))]
@@ -141,6 +147,7 @@ def main():
         screen.fill('Black')
         curFruit._draw_fruit()
         snake.draw_bits()
+        curFruit._draw_score(screen)
         pygame.display.flip()
         dt = clock.tick(10)
 
