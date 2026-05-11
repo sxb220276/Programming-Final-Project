@@ -28,10 +28,16 @@ class SnakeTrail():
     #     Snake bits all have same pos value causing them to overlap
     #TODO: Update and add bit on scoring a fruit
 
+    def new_bit(self):
+        bit_pos = [self.snake_body[0].pos[0], self.snake_body[0].pos[1]]
+        bit = SnakeBit(self.screen, bit_pos)
+        self.snake_body.append(bit)
+
     def create_bits(self):
         for x in range(0, self.length):
-            bit = SnakeBit(self.screen, self.pos)
-            self.snake_body.insert(-1, bit)
+            bit_pos = [self.pos[0], self.pos[1]]
+            bit = SnakeBit(self.screen, bit_pos)
+            self.snake_body.append(bit)
     
     # draws bits inside of list
     def draw_bits(self):
@@ -44,10 +50,11 @@ class SnakeTrail():
         #BUG: Currently updating all of them to have the same pos
         #     Each iteration just overwrites with the heads current location
         #     Logic is wrong, needs to update end of tail first
-        for idx in range(self.length - 1, 0, -1):
-            #print(idx)
-            if idx != self.length - 1:
-                self.snake_body[idx].pos = self.snake_body[idx - 1].pos
+        for idx in range(self.length - 1, -1, -1):
+            print(idx)
+            self.snake_body[idx].pos = [self.snake_body[idx - 1].pos[0],
+            self.snake_body[idx - 1].pos[1]]
+
         #print(body_piece)
         #print(last_pos)
     
@@ -64,27 +71,33 @@ class SnakeTrail():
     def movement(self, direction):
         # Updates Position of bit
         head = self.snake_body[0]
+        new_head_pos = [head.pos[0], head.pos[1]]
         #print(last_pos)
         # UP
         if direction == 0:
-            head.pos[1] -= 20
+            new_head_pos[1] -= 20
             #print(snake_pos[1])
 
         # DOWN
-        if direction == 1:
-            head.pos[1] += 20
+        elif direction == 1:
+            new_head_pos[1] += 20
             #print(snake_pos[1])
 
         # LEFT
-        if direction == 2:
-            head.pos[0] -= 20
+        elif direction == 2:
+            new_head_pos[0] -= 20
             #print(snake_pos[0])
 
         # RIGHT
-        if direction == 3:
-            head.pos[0] += 20
+        elif direction == 3:
+            new_head_pos[0] += 20
 
+        else:
+            return
+        
         self._body_movement()
+
+        head.pos = new_head_pos
             #print(idx)
             #print(last_pos)
 
@@ -166,22 +179,25 @@ def loadScreen1(screen, score):
 
     if score == 20:
         screen.fill('White')
+
+    if score > 20 and score < 23:
+        screen.fill('White')
         font = pygame.font.SysFont('rockwell', 10)
         img = font.render("Please, just leave me alone", False, 'Black')
         screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
 
-    if score > 20 and score < 23:
+    if score > 22 and score < 25:
         screen.fill('White')
         img = font.render("Please?", False, 'Black')
         screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
-
-    if score > 22 and score < 25:
-        screen.fill('White')
-        img = font.render("Fine then, I'll make you.", False, 'Black')
-        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
     
     if score == 25:
-        print("returning")
+        screen.fill('White')
+        img = font.render("Fine, I'll just make you then.", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+
+    if score == 26:
+        #print("returning")
         screen.fill('White')
         return False
 
@@ -234,7 +250,9 @@ def main():
         if(snake.snake_body[0].pos == curFruit.pos):
             #Checks if player "eats" a fruit
             curFruit.new_fruit()
-            print(curFruit.pos)
+            snake.new_bit()
+            snake.length += 1
+            #print(curFruit.pos)
         
         if(snake.check_bounds(resolution)):
             #checks if player left screen and resets game
