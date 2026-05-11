@@ -99,7 +99,7 @@ class Fruit():
         self.pos = [ 20 * (random.randrange(0, self.resolution[0] // 20)), 20 * (random.randrange(0, self.resolution[1] // 20))]
     
     def _draw_fruit(self):
-        pygame.draw.rect(self.screen, 'Red', (self.pos[0], self.pos[1], self.size, self.size))
+        pygame.draw.rect(self.screen, 'Red' , (self.pos[0], self.pos[1], self.size, self.size))
 
     def _draw_score(self, screen):
         font = pygame.font.SysFont("Arial", 20)
@@ -117,8 +117,76 @@ class Fruit():
 #    location = []
 #    location = 20 * (random.randrange()), 20 * (random.randrange(1, resolution[1] // 20))
 #    #print(location)
+
+def loadScreen1(screen, score):
+    screen.fill('Grey')
+    font = pygame.font.SysFont('rockwell', 20)
+    if score < 9 and score > 6:
+        screen.fill('White')
+        img = font.render("Who are you?", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
     
+    if score > 8 and score < 11:
+        screen.fill('White')
+        img = font.render("How did you get here?", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
     
+    if score > 10 and score < 13:
+        screen.fill('White')
+        img = font.render("Why are you here?", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+    
+    if score > 12 and score < 15:
+        screen.fill('White')
+        img = font.render("Is this some sick joke? Did they put you up to this?", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+    
+    if score == 15:
+        screen.fill('White')
+        img = font.render("Stop", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+    
+    if score > 15 and score < 18:
+        screen.fill('White')
+        font = pygame.font.SysFont('rockwell', 30)
+        img = font.render("Are you not listening?", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+    
+    if score == 18:
+        screen.fill('White')
+        font = pygame.font.SysFont('rockwell', 40)
+        img = font.render("Stop.", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+    
+    if score > 18 and score < 20:
+        screen.fill('darkred')
+        font = pygame.font.SysFont('Impact', 50)
+        img = font.render("I SAID STOP", False, 'White')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+
+    if score == 20:
+        screen.fill('White')
+        font = pygame.font.SysFont('rockwell', 10)
+        img = font.render("Please, just leave me alone", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+
+    if score > 20 and score < 23:
+        screen.fill('White')
+        img = font.render("Please?", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+
+    if score > 22 and score < 25:
+        screen.fill('White')
+        img = font.render("Fine then, I'll make you.", False, 'Black')
+        screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
+    
+    if score == 25:
+        print("returning")
+        screen.fill('White')
+        return False
+
+    return True
+        
 
 def main():
     pygame.init()
@@ -144,7 +212,10 @@ def main():
 
     while running:
 
-        screen.fill('Black')
+        if curFruit.score <= 5:
+            screen.fill('Black')
+        else:
+            running = loadScreen1(screen, curFruit.score)
         curFruit._draw_fruit()
         snake.draw_bits()
         curFruit._draw_score(screen)
