@@ -10,12 +10,9 @@ class SnakeBit():
         self.screen = screen
 
     def draw_snake(self):
-        # Would update snake on surface
         pygame.draw.rect(self.screen, self.color, (self.pos[0], self.pos[1], self.size, self.size))
-        #print(self.pos)
 
 class SnakeTrail():
-    #TODO: Create function that updates all bits within snake_body list
     
     def __init__(self, pos, screen, length):
         self.pos = pos
@@ -24,12 +21,9 @@ class SnakeTrail():
         self.snake_body = []
 
     #creates individual parts of snakes and stores to back of list
-    #BUG: does not display all snake bits, 
-    #     Snake bits all have same pos value causing them to overlap
-    #TODO: Update and add bit on scoring a fruit
 
     def new_bit(self):
-        bit_pos = [self.snake_body[0].pos[0], self.snake_body[0].pos[1]]
+        bit_pos = [self.snake_body[-1].pos[0], self.snake_body[-1].pos[1]]
         bit = SnakeBit(self.screen, bit_pos)
         self.snake_body.append(bit)
 
@@ -42,22 +36,18 @@ class SnakeTrail():
     # draws bits inside of list
     def draw_bits(self):
         for idx, bit in enumerate(self.snake_body):
-            #print(self.snake_body[idx].pos)
             bit.draw_snake()
     
     def _body_movement(self):
-        #updates parts of the snake body
-        #BUG: Currently updating all of them to have the same pos
-        #     Each iteration just overwrites with the heads current location
-        #     Logic is wrong, needs to update end of tail first
         for idx in range(self.length - 1, -1, -1):
-            print(idx)
             self.snake_body[idx].pos = [self.snake_body[idx - 1].pos[0],
             self.snake_body[idx - 1].pos[1]]
 
-        #print(body_piece)
-        #print(last_pos)
-    
+    def check_overlap(self):
+        for idx in range((self.length) - 1, 0, -1):
+            if self.snake_body[0].pos == self.snake_body[idx].pos:
+                return True 
+
     def check_bounds(self, resolution):
         if self.snake_body[0].pos[0] > resolution[0] or self.snake_body[0].pos[0] < 0:
             return True
@@ -72,21 +62,17 @@ class SnakeTrail():
         # Updates Position of bit
         head = self.snake_body[0]
         new_head_pos = [head.pos[0], head.pos[1]]
-        #print(last_pos)
         # UP
         if direction == 0:
             new_head_pos[1] -= 20
-            #print(snake_pos[1])
 
         # DOWN
         elif direction == 1:
             new_head_pos[1] += 20
-            #print(snake_pos[1])
 
         # LEFT
         elif direction == 2:
             new_head_pos[0] -= 20
-            #print(snake_pos[0])
 
         # RIGHT
         elif direction == 3:
@@ -98,8 +84,6 @@ class SnakeTrail():
         self._body_movement()
 
         head.pos = new_head_pos
-            #print(idx)
-            #print(last_pos)
 
 
 class Fruit():
@@ -123,13 +107,6 @@ class Fruit():
     def new_fruit(self):
         self.score += 1
         self.pos = [20 * (random.randrange(0, self.resolution[0] // 20)), 20 * (random.randrange(0, self.resolution[1] // 20))]
-
-
-#def create_Fruit(screen, resolution):
-#    #works, just gets removed by screen.fill
-#    location = []
-#    location = 20 * (random.randrange()), 20 * (random.randrange(1, resolution[1] // 20))
-#    #print(location)
 
 def loadScreen1(screen, score):
     screen.fill('Grey')
@@ -197,7 +174,6 @@ def loadScreen1(screen, score):
         screen.blit(img, (img.get_rect(center = screen.get_rect().center)))
 
     if score == 26:
-        #print("returning")
         screen.fill('White')
         return False
 
@@ -230,32 +206,31 @@ def main():
 
         if curFruit.score <= 5:
             screen.fill('Black')
+            curFruit._draw_score(screen)
         else:
             running = loadScreen1(screen, curFruit.score)
         curFruit._draw_fruit()
         snake.draw_bits()
-        curFruit._draw_score(screen)
+        
         pygame.display.flip()
         dt = clock.tick(10)
 
         snake.movement(direction)
-
-        #snake.snake_body[3].pos[0] += 20
-        #for idx in range(3, -1, -1):
-            #print(idx)
-            #print(snake.snake_body[idx].pos)
-
-        #create_Fruit(screen, resolution)
 
         if(snake.snake_body[0].pos == curFruit.pos):
             #Checks if player "eats" a fruit
             curFruit.new_fruit()
             snake.new_bit()
             snake.length += 1
-            #print(curFruit.pos)
-        
+
         if(snake.check_bounds(resolution)):
             #checks if player left screen and resets game
+            snake = SnakeTrail([resolution[0]//2,resolution[1]//2], screen, 4)
+            snake.create_bits()
+            curFruit = Fruit(screen, resolution)
+            direction = None
+        
+        if (snake.check_overlap()) and direction != None:
             snake = SnakeTrail([resolution[0]//2,resolution[1]//2], screen, 4)
             snake.create_bits()
             curFruit = Fruit(screen, resolution)
@@ -267,7 +242,6 @@ def main():
 
 
             if event.type == pygame.KEYDOWN:
-                #TODO: Move to its own function
                 key = pygame.key.get_pressed()
                 
                 # Up
